@@ -1,5 +1,5 @@
 const NotFoundHandler = (req, res, next) => {
-  res.status(404).jason({
+  res.status(404).json({
     message: "Not Found Route",
   });
 };
