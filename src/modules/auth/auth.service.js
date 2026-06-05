@@ -3,7 +3,7 @@ const UserModel = require("../user/user.model");
 const createHttpError = require("http-errors");
 const { AuthMessage } = require("./auth.messages");
 const { randomInt } = require("crypto");
-
+const jwt = require("jsonwebtoken");
 class AuthService {
   #model;
   constructor() {
@@ -41,14 +41,20 @@ class AuthService {
       throw new createHttpError.Unauthorized(AuthMessage.OtpCodeIsIncorrect);
     if (!user.verifyMobile) {
       user.verifyMobile = true;
-      await user.save();
     }
-    return user;
+    const accessToken = this.signToken({ mobile, id: user._id });
+    user.accessToken = accessToken;
+    await user.save();
+    return accessToken;
   }
   async checkExistByMobile(mobile) {
     const user = await this.#model.findOne({ mobile });
     if (!user) throw new createHttpError.NotFound(AuthMessage.NotFound);
     return user;
+  }
+
+  signToken(payload) {
+    return jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
   }
 }
 // از روش سینگلتون استفاده میکنیم که از یک کلاس یکبار اینستنس درست میکند

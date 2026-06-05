@@ -24,6 +24,9 @@ const UserSchema = new Schema(
       required: true,
       default: false,
     },
+    accessToken: {
+      type: String,
+    },
   },
   { timestamps: true },
 );
