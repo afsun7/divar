@@ -50,4 +50,5 @@ class AuthController {
     }
   }
 }
+//Singleton
 module.exports = new AuthController();
