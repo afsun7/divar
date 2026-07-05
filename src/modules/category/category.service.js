@@ -12,7 +12,7 @@ class CategoryService {
     this.#model = CategoryModel;
   }
   async find() {
-    return await this.#model.find({});
+    return await this.#model.find({ parent: { $exists: false } });
   }
   async create(categoryDto) {
     if (categoryDto?.parent && isValidObjectId(categoryDto.parent)) {
