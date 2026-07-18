@@ -36,8 +36,17 @@ class OptionService {
 
   async find() {
     // در متد فایند اولی پارامترهایی که نیاز داریم دومی فیلتر و سومی مرتب کردن است از اخرین دیتا به اولین دیتا وارد شده مرتب میشود
-    const option = await this.#model.find({}, {}, { sort: { _id: -1 } });
-    return option;
+    const options = await this.#model
+      .find({}, { __v: 0 }, { sort: { _id: -1 } })
+      .populate([{ path: "category", select: { name: 1, slug: 1 } }]);
+    return options;
+  }
+
+  async findById(id) {
+    return await this.checkExistById(id);
+  }
+  async findByCategoryId(category) {
+    return await this.#model.find({ category }, { __v: 0 });
   }
   // جلوگیری کنیم از اینکه ادمین دیتای تکراری وارد کنه با دوبار کلیک نتواند دیتای تکراری وارد بشه
   async alreadyExistByCategoryAndKey(key, id) {
@@ -48,6 +57,14 @@ class OptionService {
 
     if (isExist) throw new createHttpError.Conflict(OptionMessage.AlreadyExist);
     return null;
+  }
+
+  async checkExistById(id) {
+    const option = await this.#model.findById(id);
+    console.log(option);
+
+    if (!option) throw new createHttpError.NotFound(OptionMessage.NotFound);
+    return option;
   }
 }
 module.exports = new OptionService();
