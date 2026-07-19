@@ -45,6 +45,12 @@ class OptionService {
   async findById(id) {
     return await this.checkExistById(id);
   }
+
+  async removeById(id) {
+    await this.checkExistById(id);
+    return await this.#model.deleteOne({ _id: id });
+  }
+
   async findByCategoryId(category) {
     return await this.#model.find({ category }, { __v: 0 });
   }
