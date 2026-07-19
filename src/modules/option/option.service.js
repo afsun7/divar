@@ -95,8 +95,6 @@ class OptionService {
 
   async checkExistById(id) {
     const option = await this.#model.findById(id);
-    console.log(option);
-
     if (!option) throw new createHttpError.NotFound(OptionMessage.NotFound);
     return option;
   }
