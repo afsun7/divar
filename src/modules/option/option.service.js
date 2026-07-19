@@ -48,6 +48,40 @@ class OptionService {
   async findByCategoryId(category) {
     return await this.#model.find({ category }, { __v: 0 });
   }
+  async findByCategorySlug(slug) {
+    const options = await this.#model.aggregate([
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      {
+        $unwind: "$category",
+      },
+      {
+        $addFields: {
+          categorySlug: "$category.slug",
+          categoryName: "$category.name",
+          categoryIcon: "$category.icon",
+        },
+      },
+      {
+        $project: {
+          category: 0,
+          __v: 0,
+        },
+      },
+      {
+        $match: {
+          categorySlug: slug,
+        },
+      },
+    ]);
+    return options;
+  }
   // جلوگیری کنیم از اینکه ادمین دیتای تکراری وارد کنه با دوبار کلیک نتواند دیتای تکراری وارد بشه
   async alreadyExistByCategoryAndKey(key, id) {
     const isExist = await this.#model.findOne({

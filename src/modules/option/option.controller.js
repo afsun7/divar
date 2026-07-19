@@ -37,11 +37,18 @@ class OptionController {
       next(error);
     }
   }
+  async findByCategorySlug(req, res, next) {
+    try {
+      const { slug } = req.params;
+      const option = await this.#service.findByCategorySlug(slug);
+      return res.json(option);
+    } catch (error) {
+      next(error);
+    }
+  }
   async findById(req, res, next) {
     try {
       const { id } = req.params;
-      console.log(id);
-
       const option = await this.#service.findById(id);
       return res.json(option);
     } catch (error) {
