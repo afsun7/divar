@@ -14,6 +14,7 @@ router.get(
 router.get("/by-category-slug/:slug", optionController.findByCategorySlug);
 router.get("/:id", ValidateObjectId, optionController.findById);
 router.delete("/:id", ValidateObjectId, optionController.removeById);
+router.put("/:id", ValidateObjectId, optionController.update);
 module.exports = {
   optionRoutes: router,
 };

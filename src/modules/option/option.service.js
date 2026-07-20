@@ -34,6 +34,43 @@ class OptionService {
     return option;
   }
 
+  async update(id, optionDto) {
+    const existOption = await this.checkExistById(id);
+
+    if (optionDto.category) {
+      const category = await this.#categoryService.checkExistById(
+        optionDto.category,
+      );
+
+      optionDto.category = category._id;
+    }
+
+    if (optionDto.key) {
+      optionDto.key = slugify(optionDto.key, {
+        trim: true,
+        replacement: "_",
+        lower: true,
+      });
+    }
+
+    const key = optionDto.key ?? existOption.key;
+    const categoryId = optionDto.category ?? existOption.category;
+
+    if (optionDto.key || optionDto.category) {
+      await this.alreadyExistByCategoryAndKey(key, categoryId);
+    }
+
+    if (optionDto.enum !== undefined) {
+      if (typeof optionDto.enum === "string") {
+        optionDto.enum = optionDto.enum.split(",");
+      } else if (!Array.isArray(optionDto.enum)) {
+        delete optionDto.enum;
+      }
+    }
+
+    return await this.#model.updateOne({ _id: id }, { $set: optionDto });
+  }
+
   async find() {
     // در متد فایند اولی پارامترهایی که نیاز داریم دومی فیلتر و سومی مرتب کردن است از اخرین دیتا به اولین دیتا وارد شده مرتب میشود
     const options = await this.#model
