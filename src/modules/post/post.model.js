@@ -1,4 +1,4 @@
-const { Schema, Types } = require("mongoose");
+const { Schema, Types, model } = require("mongoose");
 
 const PostSchema = new Schema({
   title: { type: String, required: true },
@@ -11,3 +11,5 @@ const PostSchema = new Schema({
   coordinate: { type: [Number], required: true }, //51.215485487, 52.687524154
   images: { type: [String], required: false, default: [] },
 });
+const PostModel = model("post", PostSchema);
+module.exports = PostModel;
