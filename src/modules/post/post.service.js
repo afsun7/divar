@@ -14,5 +14,9 @@ class PostService {
   async getCategoryOptions(categoryId) {
     return this.#optionModel.find({ category: categoryId });
   }
+
+  async create(dto) {
+    return this.#model.create(dto);
+  }
 }
 module.exports = new PostService();

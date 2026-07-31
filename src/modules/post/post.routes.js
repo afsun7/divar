@@ -1,10 +1,12 @@
 const { Router } = require("express");
 const ValidateObjectId = require("../../common/guard/validateObjectId.guard");
 const postController = require("./post.controller");
+const { uploadFile } = require("../../common/utils/multer");
 
 const router = Router();
 
 router.get("/create", postController.createPostPage);
+router.post("/create", uploadFile.any(), postController.create);
 // router.get("/", postController.find);
 // router.get(
 //   "/by-category/:categoryId",

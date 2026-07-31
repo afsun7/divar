@@ -3,6 +3,7 @@ const postService = require("./post.service");
 const { PostMessage } = require("./post.message");
 const CategoryModel = require("../category/category.model");
 const createHttpError = require("http-errors");
+const { getAddressDetail } = require("../../common/utils/map");
 
 class PostController {
   #service;
@@ -37,6 +38,33 @@ class PostController {
         categories,
         category,
         options,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async create(req, res, nex) {
+    try {
+      const { title, content, lat, lng, category, amount, images, ...options } =
+        req.body;
+      const { province, city, district, address } = await getAddressDetail(
+        lat,
+        lng,
+      );
+
+      await this.#service.create({
+        userId,
+        title,
+        amount,
+        content,
+        coordinate: [lat, lng],
+        category: new Types.ObjectId(category),
+        images,
+        options,
+        address,
+        province,
+        city,
+        district,
       });
     } catch (error) {
       next(error);
